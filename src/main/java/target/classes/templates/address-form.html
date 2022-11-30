@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<title>Edit address</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Reference Bootstrap files -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+	<form action="#" th:action="@{/update-customer-address}" th:object="${address}" th:method="put">
+	
+		<input type="hidden" th:field="*{id}" th:value="${address.id}"/>
+		<input type="hidden" th:name="cusId" th:value="${cusId}"/>
+		<br>
+		<label th:for="*{typeOfAddress}">Type of Address</label>
+		<input type="text" th:field="*{typeOfAddress}"/>
+		<p th:if="${#fields.hasErrors('typeOfAddress')}">Please enter a valid address type.</p>
+		<br>
+		<label th:for="*{line1}">Line 1</label>
+		<input type="text" th:field="*{line1}"/>
+		<p th:if="${#fields.hasErrors('line1')}">Please enter a minimum of one address line.</p>
+		<br>
+		<label th:for="*{line2}">Line 2</label>
+		<input type="text" th:field="*{line2}"/>
+		<br>
+		<label th:for="*{line3}">Line 3</label>
+		<input type="text" th:field="*{line3}"/>
+		<br>
+		<label th:for="*{postcode}">Postcode</label>
+		<input type="text" th:field="*{postcode}"/>
+		<p th:if="${#fields.hasErrors('postcode')}">Please enter a valid postcode</p>
+		<br>
+		<label th:for="*{country}">Country</label>
+		<input type="text" th:field="*{country}"/>
+		<p th:if="${#fields.hasErrors('country')}">Please enter a valid country</p>
+		<br>
+		<label th:for="*{province}">Province/State</label>
+		<input type="text" th:field="*{province}"/>
+		<br>
+		<label th:for="*{city}">City</label>
+		<input type="text" th:field="*{city}"/>
+		<p th:if="${#fields.hasErrors('city')}">Please enter a valid city name</p>
+		<br>
+		<label th:for="*{phoneNumber}">Phone Number</label>
+		<input type="text" th:field="*{phoneNumber}"/>
+		<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
+		<br>
+		<label th:for="*{faxNumber}">Fax Number</label>
+		<input type="text" th:field="*{faxNumber}"/>
+		<p th:if="${#fields.hasErrors('faxNumber')}">Please enter a valid fax number</p>
+		<br>
+		<button type="submit">Save</button>
+	</form>
+</body>
+</html>
