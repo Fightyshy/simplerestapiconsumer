@@ -29,8 +29,6 @@ public class EmailNotFoundValidator implements ConstraintValidator<EmailNotFound
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		try {
-			System.out.println(value);
 		HttpHeaders headers = new HttpHeaders();
 		
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -41,11 +39,7 @@ public class EmailNotFoundValidator implements ConstraintValidator<EmailNotFound
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		ResponseEntity<Object> checker = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Object.class);
 		
-		System.out.println("here");
-		return (boolean) checker.getBody();}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return (boolean) checker.getBody();
 	}
 
 }

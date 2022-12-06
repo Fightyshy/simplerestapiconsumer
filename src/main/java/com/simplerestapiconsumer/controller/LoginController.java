@@ -3,11 +3,11 @@ package com.simplerestapiconsumer.controller;
 import java.util.Collections;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,22 +29,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.simplerestapiconsumer.SimplerestapiconsumerApplication;
 import com.simplerestapiconsumer.entity.EmailWrapper;
 import com.simplerestapiconsumer.entity.Login;
 import com.simplerestapiconsumer.entity.ResetPW;
 
 @Controller
 public class LoginController {
-	
-	@Autowired
+
 	private RestTemplate restTemplate;
-	
-	private static final org.slf4j.Logger log = LoggerFactory.getLogger(SimplerestapiconsumerApplication.class);
-	
-	@Autowired
+	private final Logger log;
 	private JavaMailSender mailSender;
 	
+	public LoginController(RestTemplate restTemplate, Logger log, JavaMailSender mailSender) {
+		this.restTemplate = restTemplate;
+		this.log = log;
+		this.mailSender = mailSender;
+	}
+
 	//issue token - with /password-recovery
 	@PostMapping("/issue-pw-token")
 	public String requestPWResetToken(@ModelAttribute("email") @Valid EmailWrapper email, BindingResult br){
@@ -64,7 +65,7 @@ public class LoginController {
 	
 	//actual login
 	@PostMapping("/retrieve-token")
-	public String retrieveTokenFromServer(@ModelAttribute("login") Login login, HttpServletResponse res) {
+	public String retrieveTokenFromServer(@ModelAttribute("login") Login login, BindingResult br, HttpServletResponse res) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.add("Location", "/home");
@@ -107,6 +108,23 @@ public class LoginController {
 		}
 	}
 	
+	@GetMapping("/logout")
+	public String logoutUser(HttpServletRequest req) {
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
+//		HttpEntity<Object> entity = new HttpEntity<>(headers);
+//		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+//		restTemplate.exchange("http://localhost:8080/logout", HttpMethod.GET, entity, Object.class);
+//		req.getSession(false);
+		return "redirect:http://localhost:8080/logout";
+	}
+	
+	@GetMapping("/logindefault")
+	public String altLoginPage(Model model) {
+		model.addAttribute("login", new Login());
+		return "loginpage";
+	}
+	
 	@GetMapping("/loginpage")
 	public String showMyLoginPage(@CookieValue(name="token", required=false) String token, Model model) {
 		if(token!=null) {
@@ -120,6 +138,11 @@ public class LoginController {
 	
 	@GetMapping("/password-reset")
 	public String showPasswordResetPage(Model model, @RequestParam("pwtoken") String token) {
+		UriComponentsBuilder recovery = UriComponentsBuilder.fromUriString("http://localhost:8080/tokenChecker").queryParam("token", token);
+		ResponseEntity<Object> checker = restTemplate.exchange(recovery.toUriString(), HttpMethod.GET, entityGenerator(token), Object.class);
+		if(checker.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
+			return "error/pwreset";
+		}
 		ResetPW reset = new ResetPW();
 		reset.setToken(token);
 		model.addAttribute("pwreset", reset);
@@ -166,5 +189,18 @@ public class LoginController {
 		
 		mailSender.send(mail);
 		log.info("Password recovery email sent out to "+ email);
+	}
+	
+	private <T> HttpEntity<T> entityGenerator(T input){
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+//		headers.set("Authorization", "Bearer"+token);
+		
+		if(input==null) {
+			return new HttpEntity<T>(headers);		
+		}else {
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			return new HttpEntity<T>(input, headers);
+		}
 	}
 }
