@@ -110,12 +110,6 @@ public class LoginController {
 	
 	@GetMapping("/logout")
 	public String logoutUser(HttpServletRequest req) {
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.setAccept(Collections.singletonList(MediaType.TEXT_HTML));
-//		HttpEntity<Object> entity = new HttpEntity<>(headers);
-//		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-//		restTemplate.exchange("http://localhost:8080/logout", HttpMethod.GET, entity, Object.class);
-//		req.getSession(false);
 		return "redirect:http://localhost:8080/logout";
 	}
 	
@@ -156,6 +150,14 @@ public class LoginController {
 		return "password-recovery";
 	}
 	
+	@GetMapping("/passowrd-change")
+	public String changePassword(@CookieValue(name="token") String token, Model model) {
+		ResetPW reset = new ResetPW();
+		reset.setToken(token);
+		model.addAttribute("pwreset", reset);
+		return "password-change";
+	}
+	
 	@GetMapping("/access-denied")
 	public String showAccessDenied() {
 		
@@ -185,7 +187,7 @@ public class LoginController {
 		mail.setTo(email);
 		mail.setSubject("Test passowrd recovery mail");
 		mail.setText("Test email of issuing password recovery link:\n"
-				+ recovery.toUriString());
+				+ "<a href='"+recovery.toUriString()+"/>");
 		
 		mailSender.send(mail);
 		log.info("Password recovery email sent out to "+ email);
