@@ -5,7 +5,6 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @JsonIdentityInfo(
@@ -20,14 +19,12 @@ public class Cases {
 	private String casesStatus; //Not null
 	
 	@NotNull
-//	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDateTime startDate; //Not null
 
 	private LocalDateTime endDate;
 
 	private Products product;
 	
-//	@JsonIdentityReference(alwaysAsId = true)
 	private Set<Employee> employee;
 
 	private Customer customer;

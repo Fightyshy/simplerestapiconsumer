@@ -15,6 +15,9 @@
 	<a th:href="@{/details-change}">Change details</a>
 	<a th:href="@{/cases-history}">Check cases</a>
 	
-	<div th:with="{"
+	<div th:with="employee=${employee}">
+		<h1>Welcome <span th:text="${employee.firstName}"/> </h1>
+		<h3>You currently involved in  active cases</h3>
+	</div>
 </body>
 </html>

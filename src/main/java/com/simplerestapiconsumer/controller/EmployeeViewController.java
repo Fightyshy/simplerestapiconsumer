@@ -2,6 +2,8 @@ package com.simplerestapiconsumer.controller;
 
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.simplerestapiconsumer.entity.Cases;
 import com.simplerestapiconsumer.entity.Employee;
 import com.simplerestapiconsumer.util.TokenParser;
@@ -37,22 +38,31 @@ public class EmployeeViewController {
 		this.tokenParser = tokenParser;
 	}
 	
-	@GetMapping("/account-details")
-	public String displayAccountDetails(@CookieValue(name="token") String token, Model model) {
-		String username = tokenParser.getUsernameFromToken(token);
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/customer-address").queryParam("username", username);
-		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator(token, null), Employee.class);
-		model.addAttribute("employee", emp);
-		return "account-details";
-	}
+//	@GetMapping("/account-details")
+//	public String displayAccountDetails(@CookieValue(name="token") String token, Model model) {
+//		String username = tokenParser.getUsernameFromToken(token);
+//		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/username").queryParam("username", username);
+//		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator(token, null), Employee.class);
+//		model.addAttribute("employee", emp);
+//		return "account-details";
+//	}
+//	
+//	@GetMapping("/details-change")
+//	public String changeEmployeeDetails(@CookieValue(name="token") String token, Model model) {
+//		String username = tokenParser.getUsernameFromToken(token);
+//		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/username").queryParam("username", username);
+//		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator(token, null), Employee.class);
+//		model.addAttribute("employee", emp);
+//		return "details-change";
+//	}
 	
-	@GetMapping("/details-change")
-	public String changeEmployeeDetails(@CookieValue(name="token") String token, Model model) {
+	@GetMapping({"/account-details", "/details-change"})
+	public String retrieveEmployeeAccountDetails(@CookieValue(name="token") String token, Model model, HttpServletRequest req) {
 		String username = tokenParser.getUsernameFromToken(token);
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/customer-address").queryParam("username", username);
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/employees/username").queryParam("username", username);
 		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator(token, null), Employee.class);
-		model.addAttribute("employee", emp);
-		return "details-change";
+		model.addAttribute("employee", emp.getBody());
+		return req.getRequestURI().toString().equals("/account-details")?"account-details":"details-change";
 	}
 	
 	//TODO resttemplate retrieval with custom DTO for display
