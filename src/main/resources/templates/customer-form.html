@@ -15,7 +15,7 @@
 
 		<input type="hidden" th:field="*{id}" th:value="${customer.id}"/>
 	
-				<label th:for="firstName">First name</label>
+		<label th:for="firstName">First name</label>
 		<input type="text" th:field="*{firstName}"/>
 		<p th:if="${#fields.hasErrors('firstName')}">Please enter a valid name</p>
 		<br>
@@ -52,6 +52,7 @@
 		<br>
 		<input type="hidden" th:field="*{socialMedia.id}" th:value="*{socialMedia.id}"/>
 		<br>
+		<label th:for="socialMedia.preferredSocialMedia}">Select customer preferred social media</label>
 		<select name="socialMediaNames" th:field="${customer.socialMedia.preferredSocialMedia}">
 			<option th:each="name : ${T(com.simplerestapiconsumer.entity.SocialMediaNames).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
 		</select>

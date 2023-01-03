@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,16 +24,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.simplerestapiconsumer.entity.Address;
 import com.simplerestapiconsumer.entity.Customer;
 import com.simplerestapiconsumer.entity.SocialMedia;
+import com.simplerestapiconsumer.util.TokenParser;
 
 @Controller
 public class CustomerViewController {
 	
 	private final Logger log;
 	private RestTemplate restTemplate;
+	private TokenParser tokenProvider;
 	
-	public CustomerViewController(Logger log, RestTemplate restTemplate) {
+	public CustomerViewController(Logger log, RestTemplate restTemplate, TokenParser tokenProvider) {
 		this.log=log;
 		this.restTemplate=restTemplate;
+		this.tokenProvider = tokenProvider;
 	}
 	
 	@GetMapping("/home")
@@ -56,12 +58,14 @@ public class CustomerViewController {
 		for(Customer cus: wrapper.getBody()) {
 			log.info(cus.toString());
 		}
-		
+		log.info(tokenProvider.getAuthFromToken(token).toString());
 		request.removeAttribute("cusId");
 		//https://stackoverflow.com/questions/38700790/how-to-return-a-html-page-from-a-restful-controller-in-spring-boot
 		ModelAndView model = new ModelAndView();
 		model.setViewName("home.html");
 		model.addObject("customer", wrapper.getBody());
+		model.addObject("username", tokenProvider.getUsernameFromToken(token));
+		model.addObject("role", tokenProvider.getAuthFromToken(token));
 		return model;
 		
 	}

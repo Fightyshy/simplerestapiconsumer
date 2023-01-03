@@ -11,11 +11,16 @@
 </head>
 <body>
 
-	<a th:href="@{/account-details}">Account details</a>
-	<a th:href="@{/cases-history}">Case history</a>
-	<a th:href="@{/add-case}">Add case</a>
-	<a th:href="@{/add-customer}">Add customer</a>
-	<a th:href="@{/logout}">Logout</a>
+	<a th:href="@{/account-details}" class="btn btn-primary">Account details</a>
+	<a th:href="@{/cases-history}" class="btn btn-primary">Case history</a>
+	<a th:href="@{/add-case}" class="btn btn-primary">Add case</a>
+	
+	<div th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
+		<a th:href="@{/save-new-employee-form}" class="btn btn-primary">Add new employee</a>
+		<a th:href="@{/list-employees}" class="btn btn-primary">See employees</a>
+	</div>
+	
+	<a th:href="@{/logout}" class="btn btn-danger">Logout</a>
 	
 	<a th:href="@{/save-new-customer-form}" class="btn btn-primary">Add new customer</a>
 	<table>
@@ -32,7 +37,9 @@
 			<td th:text="${customers.lastName}"/>
  			<td th:text="${customers.emailAddress}"/>
 			<td th:text="${customers.phoneNumber}"/>
-			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a> <a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a></td>
+			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a>
+			<a th:href="@{/add-new-case-to-customer}" class="btn btn-primary">Add new case to customer</a>
+			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a></td>
 			<!-- https://stackoverflow.com/questions/33753975/thymeleaf-using-path-variables-to-thhref -->
 		</tr>
 	</table>
