@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>First name</th>
+			<th>Last name</th>
+			<th>Email address</th>
+			<th>Phone number</th>
+			<th>Active cases</th>
+			<th>Pending cases</th>
+		</tr>
+		
+		<tr th:each="employees : ${employees}">
+			<td th:text="${employees.firstName}"/>
+			<td th:text="${employees.lastName}"/>
+ 			<td th:text="${employees.emailAddress}"/>
+			<td th:text="${employees.phoneNumber}"/>
+			<td th:text="${employees.casesActive}"/>
+			<td th:text="${employees.casesPending}"/>
+		</tr>
+	</table>
+</body>
+</html>

@@ -1,12 +1,17 @@
 package com.simplerestapiconsumer.util;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 
 @Component
@@ -23,6 +28,12 @@ public class TokenParser{
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
+    }
+    
+    public List<String> getAuthFromToken(String token) {
+      final Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SIGNING_KEY).parseClaimsJws(token);
+      final Claims claims = claimsJws.getBody();
+      return Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",")).collect(Collectors.toList());
     }
 
     public Date getExpirationDateFromToken(String token) {

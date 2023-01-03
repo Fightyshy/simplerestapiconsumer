@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<title>Add new employee</title>
+</head>
+<body>
+	<form action="#" th:action="@{/saveNewEmployee}" th:object="${employee}" method="post">
+		<label th:for="firstName">First name</label>
+		<input type="text" th:field="*{firstName}"/>
+		<p th:if="${#fields.hasErrors('firstName')}">Please enter a valid name</p>
+		<br>
+		<label th:for="middleName">Middle name(s)</label>
+		<input type="text" th:field="*{middleName}"/>
+		<p th:if="${#fields.hasErrors('middleName')}">Please enter a valid name</p>
+		<br>
+		<label th:for="lastName">Last name</label>
+		<input type="text" th:field="*{lastName}"/>
+		<p th:if="${#fields.hasErrors('lastName')}">Please enter a valid name</p>
+		<br>
+		<label th:for="dateOfBirth">Date of birth</Label>
+		<input type="date" th:field="*{dateOfBirth}"/>
+		<p th:if="${#fields.hasErrors('dateOfBirth')}">Please enter a valid date of birth over 18 years of age</p>
+		<br>
+		<label th:for="phoneNumber">Phone number</label>
+		<input type="text" th:field="*{phoneNumber}"/>
+		<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
+		<br>
+		<label th:for="emailAddress">Email address</label>
+		<input type="email" th:field="*{emailAddress}"/>
+		<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
+		<br>
+		<input type="hidden" th:field="*{socialMedia.id}" th:value="*{socialMedia.id}"/>
+		<br>
+		<label th:for="socialMedia.facebookHandle">Facebook</label>
+		<input type="text" th:field="*{socialMedia.facebookHandle}" th:value="*{socialMedia.facebookHandle}"/>
+		<br>
+		<label th:for="socialMedia.twitterHandle">Twitter</label>
+		<input type="text" th:field="*{socialMedia.twitterHandle}" th:value="*{socialMedia.twitterHandle}"//>
+		<br>
+		<label th:for="socialMedia.instagramHandle">Instagram</label>
+		<input type="text" th:field="*{socialMedia.instagramHandle}" th:value="*{socialMedia.instagramHandle}" />
+		<br>
+		<label th:for="socialMedia.lineHandle">Line</label>
+		<input type="text" th:field="*{socialMedia.lineHandle}" th:value="*{socialMedia.lineHandle}" />
+		<br>
+		<label th:for="socialMedia.whatsappHandle">Whatsapp</label>
+		<input type="text" th:field="*{socialMedia.whatsappHandle}" th:value="*{socialMedia.whatsappHandle}" />
+		<br>
+		<button type="submit" class="btn btn-primary">Save Employee</button>
+	</form>
+</body>
+</html>
