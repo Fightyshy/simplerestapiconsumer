@@ -1,4 +1,4 @@
-package com.simplerestapiconsumer.entity;
+package com.simplerestapiconsumer.enums;
 
 public enum SocialMediaNames {
 	FACEBOOK("Facebook"),

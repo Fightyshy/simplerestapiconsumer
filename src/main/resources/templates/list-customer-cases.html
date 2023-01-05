@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<title>CRM Homepage</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>Case ID</th>
+			<th>Status</th>
+			<th>Start Date</th>
+			<th>End Date</th>
+			<th>Assigned Employees</th>
+			<th>Actions</th>
+		</tr>
+		
+		<tr th:each="case : ${cases}">
+			<td th:text="${case.id}"/>
+			<td th:text="${case.casesStatus}"/>
+			<td th:text="${case.startDate}"/>
+			<td th:text="${case.endDate}"/>
+			<td><th:block th:each="emp:${case.employee}"><p th:text="${emp.firstName}"/></th:block></td>
+			<td><a th:href="@{/resolveCase(id=${case.id})}" class="btn btn-primary">Set Resolved</a>
+			<a th:href="@{/closeCase(id=${case.id})}" class="btn btn-primary">Set Closed</a>
+			<a th:href="@{/pendingCase(id=${case.id})}"  class="btn btn-primary">Set pending</a>
+			<th:block th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
+			<!-- TODO Confirmation dialog -->
+				<a th:href="@{/activeCase(id=${case.id})}" class="btn btn-primary">Set active</a>
+				<a th:href="@{/deleteCase(id=${case.id}, cusID=${case.customer.id})}" class="btn btn-danger">Delete Case</a>
+			</th:block>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

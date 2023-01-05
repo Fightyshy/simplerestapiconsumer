@@ -40,16 +40,7 @@ public class CustomerViewController {
 	}
 	
 	@GetMapping("/home")
-	public ModelAndView retrieveAllCustomers(@CookieValue (name="token") String token, HttpServletRequest request) {
-		
-//		RestTemplate restTemplate = new RestTemplate();
-//		HttpHeaders headers = new HttpHeaders();
-//		
-//		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//		headers.set("Authorization", "Bearer" + token);
-//		
-//		HttpEntity<String> entity = new HttpEntity<>("body", headers);
-		
+	public ModelAndView retrieveAllCustomers(@CookieValue (name="token") String token, HttpServletRequest request) {		
 		HttpEntity<String> entity = entityGenerator(token, null);
 		
 		ResponseEntity<List<Customer>> wrapper = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Customer>>() {});

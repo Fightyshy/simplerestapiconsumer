@@ -2,6 +2,8 @@ package com.simplerestapiconsumer.entity;
 
 import javax.validation.constraints.NotNull;
 
+import com.simplerestapiconsumer.enums.SocialMediaNames;
+
 public class SocialMedia {
 
 	private Integer id;

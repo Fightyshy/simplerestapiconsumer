@@ -39,7 +39,9 @@
 			<td th:text="${customers.phoneNumber}"/>
 			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a>
 			<a th:href="@{/add-new-case-to-customer}" class="btn btn-primary">Add new case to customer</a>
-			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a></td>
+			<a th:href="@{/case-details(cusID=${customers.id})}" class="btn btn-primary">Check customer cases</a>
+			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a>
+			</td>
 			<!-- https://stackoverflow.com/questions/33753975/thymeleaf-using-path-variables-to-thhref -->
 		</tr>
 	</table>
