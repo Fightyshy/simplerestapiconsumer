@@ -20,9 +20,9 @@
 		<a th:href="@{/list-employees}" class="btn btn-primary">See employees</a>
 	</div>
 	
+	<a th:href="@{/save-new-customer-form}" class="btn btn-primary">Add new customer</a>
 	<a th:href="@{/logout}" class="btn btn-danger">Logout</a>
 	
-	<a th:href="@{/save-new-customer-form}" class="btn btn-primary">Add new customer</a>
 	<table>
 		<tr>
 			<th>First name</th>
@@ -38,7 +38,7 @@
  			<td th:text="${customers.emailAddress}"/>
 			<td th:text="${customers.phoneNumber}"/>
 			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a>
-			<a th:href="@{/add-new-case-to-customer}" class="btn btn-primary">Add new case to customer</a>
+			<a th:href="@{/new-case}" class="btn btn-primary">Add new case to customer</a>
 			<a th:href="@{/case-details(cusID=${customers.id})}" class="btn btn-primary">Check customer cases</a>
 			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a>
 			</td>

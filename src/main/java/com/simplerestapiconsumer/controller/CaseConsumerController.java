@@ -15,6 +15,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -29,17 +31,16 @@ public class CaseConsumerController {
 	
 	private RestTemplate restTemplate;
 	private Logger log;
-	private TokenParser parser;
+//	private TokenParser parser;
 	
 	public CaseConsumerController(RestTemplate restTemplate, Logger log, TokenParser parser) {
 		this.restTemplate = restTemplate;
 		this.log = log;
-		this.parser = parser;
+//		this.parser = parser;
 	}
 
 	@GetMapping({"/resolveCase", "/closeCase", "/pendingCase", "/activeCase"})
 	public String updateCaseStatus(@CookieValue(name="token") String token, @RequestParam("id") int id, Model model, HttpServletRequest req) throws Exception {
-		String username = parser.getUsernameFromToken(token);
 		String status = "";
 		switch(req.getRequestURI().toString()) {
 			case "/resolveCase":
@@ -57,17 +58,18 @@ public class CaseConsumerController {
 			default:
 				status = "";
 		}
-		
-		if(status.isEmpty()||status.isBlank()) {
-			//TODO Maybe fix?
-			throw new Exception();
-		}
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/cases/status").queryParam("id", id).queryParam("status", status);
 		Cases wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entityGenerator(token, null), Cases.class).getBody();
 		
 		StringBuilder logOutput = new StringBuilder().append("Case ID ").append(wrapper.getCustomer().getId()).append(" has been updated to ").append(status).append(" status");
 		log.info(logOutput.toString());
 		return "redirect:/case-details?cusID="+wrapper.getCustomer().getId(); //TODO Fix redirect
+	}
+	
+	@PostMapping("/setEndDate")
+	public String setCaseEndDate(@CookieValue(name="token") String token, @ModelAttribute("case") Cases cases) {
+		Cases wrapper = restTemplate.exchange("http://localhost:8080/cases", HttpMethod.PUT, entityGenerator(token, cases), Cases.class).getBody();
+		return wrapper.getCasesStatus().toString().equals(HttpStatus.NOT_FOUND.toString())?"redirect:/error":"redirect:/case-detail?cusID"+wrapper.getCustomer().getId();
 	}
 	
 	@GetMapping("/deleteCase")

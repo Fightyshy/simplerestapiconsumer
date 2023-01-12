@@ -48,8 +48,6 @@ public class EmployeeConsumerController {
 		log.info("User for employeeID" + wrapper.getBody().getId()+ " with username "+newUser.getBody());
 		
 		return "redirect:/home";
-		//TODO User account generation with
-		//Password = random alphanumeric, notify user to change after first login or set function to do first login password change that doubles as activator sequence
 	}
 
 	@PostMapping("/updateEmployee")

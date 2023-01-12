@@ -36,6 +36,16 @@
 		<input type="email" th:field="*{emailAddress}"/>
 		<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
 		<br>
+		<label th:for="prefComms">Preferred method of contact</label>
+		<input type="text" th:field="*{prefComms}"/>
+		<br>
+		<label th:for="occupation">Occupation</label>
+		<input type="text" th:field="*{occupation}"/>
+		<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
+		<br>
+		<label th:for="industry">Industry</label>
+		<input type="text" th:field="*{industry}"/>
+		<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
 		<input type="hidden" th:field="*{socialMedia.id}" th:value="*{socialMedia.id}"/>
 		<br>
 		<label th:for="socialMedia.preferredSocialMedia}">Select customer preferred social media</label>
