@@ -1,18 +1,18 @@
 package com.simplerestapiconsumer.entity;
-public class Products {
+public class Product {
 	
 	private int id;
 
 	private String name;
 
-	private String desc;
+	private String summary;
 
-	public Products() {
+	public Product() {
 	}
 
-	public Products(String name, String desc) {
+	public Product(String name, String summary) {
 		this.name = name;
-		this.desc = desc;
+		this.summary = summary;
 	}
 
 	public int getId() {
@@ -31,11 +31,11 @@ public class Products {
 		this.name = name;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getSummary() {
+		return summary;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 }

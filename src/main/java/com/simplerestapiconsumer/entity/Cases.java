@@ -22,8 +22,10 @@ public class Cases {
 	private LocalDateTime startDate; //Not null
 
 	private LocalDateTime endDate;
+	
+	private String summary;
 
-	private Products product;
+	private Product product;
 	
 	private Set<Employee> employee;
 
@@ -34,21 +36,23 @@ public class Cases {
 		this.startDate = LocalDateTime.now();
 	}
 	
-	public Cases(@NotNull String casesStatus, Products product, Customer customer) {
+	public Cases(@NotNull String casesStatus, String summary, Product product, Customer customer) {
 		this.casesStatus = casesStatus;
 		this.startDate = LocalDateTime.now();
 		this.endDate = null;
+		this.summary = summary;
 		this.product  = product;
 		this.customer = customer;
 	}
 	
 	
 	public Cases(Integer id, @NotNull String casesStatus, @NotNull LocalDateTime startDate, LocalDateTime endDate,
-			Products product, Set<Employee> employee, Customer customer) {
+			String summary, Product product, Set<Employee> employee, Customer customer) {
 		this.id = id;
 		this.casesStatus = casesStatus;
 		this.startDate = startDate;
 		this.endDate = endDate;
+		this.summary = summary;
 		this.product = product;
 		this.employee = employee;
 		this.customer = customer;
@@ -86,11 +90,19 @@ public class Cases {
 		this.endDate = endDate;
 	}
 
-	public Products getProduct() {
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public Product getProduct() {
 		return product;
 	}
 
-	public void setProduct(Products product) {
+	public void setProduct(Product product) {
 		this.product = product;
 	}
 
