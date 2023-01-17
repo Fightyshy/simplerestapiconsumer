@@ -105,7 +105,7 @@ public class CustomerViewController {
 		SocialMedia sm = new SocialMedia();
 		customer.setSocialMedia(sm);
 		ModelAndView model = new ModelAndView();
-		model.setViewName("new-customer-form.html");
+		model.setViewName("customer-form.html");
 		model.addObject("customer", customer);
 		return model;
 	}

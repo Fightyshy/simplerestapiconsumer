@@ -11,7 +11,7 @@
 	<title>Show customer details</title>
 </head>
 <body>
-	<form action="#" th:action="@{/update-customer}" th:object="${customer}" th:method="put">
+	<form action="#" th:action="@{${#request.requestURI.equals('/save-new-customer-form')?'/save-new-customer':'/update-customer'}}" th:object="${customer}" th:method="put">
 
 		<input type="hidden" th:field="*{id}" th:value="${customer.id}"/>
 	
@@ -21,23 +21,23 @@
 		<br>
 		<label th:for="middleName">Middle name(s)</label>
 		<input type="text" th:field="*{middleName}"/>
-				<p th:if="${#fields.hasErrors('middleName')}">Please enter a valid name</p>
+		<p th:if="${#fields.hasErrors('middleName')}">Please enter a valid name</p>
 		<br>
 		<label th:for="lastName">Last name</label>
 		<input type="text" th:field="*{lastName}"/>
-				<p th:if="${#fields.hasErrors('lastName')}">Please enter a valid name</p>
+		<p th:if="${#fields.hasErrors('lastName')}">Please enter a valid name</p>
 		<br>
 		<label th:for="dateOfBirth">Date of birth</Label>
 		<input type="date" th:field="*{dateOfBirth}"/>
-				<p th:if="${#fields.hasErrors('dateOfBirth')}">Please enter a valid date of birth over 18 years of age</p>
+		<p th:if="${#fields.hasErrors('dateOfBirth')}">Please enter a valid date of birth over 18 years of age</p>
 		<br>
 		<label th:for="phoneNumber">Phone number</label>
 		<input type="text" th:field="*{phoneNumber}"/>
-				<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
+		<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
 		<br>
 		<label th:for="emailAddress">Email address</label>
 		<input type="email" th:field="*{emailAddress}"/>
-				<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
+		<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
 		<br>
 		<label th:for="prefComms">Preferred method of contact</label>
 		<input type="text" th:field="*{prefComms}"/>
@@ -52,9 +52,9 @@
 		<br>
 		<input type="hidden" th:field="*{socialMedia.id}" th:value="*{socialMedia.id}"/>
 		<br>
-		<label th:for="socialMedia.preferredSocialMedia}">Select customer preferred social media</label>
+		<label th:for="socialMedia.preferredSocialMedia">Select customer preferred social media</label>
 		<select name="socialMediaNames" th:field="${customer.socialMedia.preferredSocialMedia}">
-			<option th:each="name : ${T(com.simplerestapiconsumer.entity.SocialMediaNames).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
+			<option th:each="name : ${T(com.simplerestapiconsumer.enums.SocialMediaNames).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
 		</select>
 		<br>
 		<label th:for="socialMedia.facebookHandle">Facebook</label>
