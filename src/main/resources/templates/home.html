@@ -38,7 +38,7 @@
  			<td th:text="${customers.emailAddress}"/>
 			<td th:text="${customers.phoneNumber}"/>
 			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a>
-			<a th:href="@{/new-case}" class="btn btn-primary">Add new case to customer</a>
+			<a th:href="@{/new-case(id=${customers.id})}" class="btn btn-primary">Add new case to customer</a>
 			<a th:href="@{/case-details(cusID=${customers.id})}" class="btn btn-primary">Check customer cases</a>
 			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a>
 			</td>

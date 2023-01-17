@@ -66,6 +66,10 @@ public class LoginController {
 	//actual login
 	@PostMapping("/retrieve-token")
 	public String retrieveTokenFromServer(@ModelAttribute("login") Login login, BindingResult br, HttpServletResponse res) {
+		if(br.hasErrors()) {
+			return "redirect:/loginpage";
+		}
+		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.add("Location", "/home");

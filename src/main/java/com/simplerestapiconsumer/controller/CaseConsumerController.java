@@ -1,6 +1,8 @@
 package com.simplerestapiconsumer.controller;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.simplerestapiconsumer.entity.Cases;
+import com.simplerestapiconsumer.entity.Employee;
 import com.simplerestapiconsumer.enums.CaseStatus;
 import com.simplerestapiconsumer.util.TokenParser;
 
@@ -31,12 +34,12 @@ public class CaseConsumerController {
 	
 	private RestTemplate restTemplate;
 	private Logger log;
-//	private TokenParser parser;
+	private TokenParser parser;
 	
 	public CaseConsumerController(RestTemplate restTemplate, Logger log, TokenParser parser) {
 		this.restTemplate = restTemplate;
 		this.log = log;
-//		this.parser = parser;
+		this.parser = parser;
 	}
 
 	@GetMapping({"/resolveCase", "/closeCase", "/pendingCase", "/activeCase"})
@@ -72,6 +75,18 @@ public class CaseConsumerController {
 		return wrapper.getCasesStatus().toString().equals(HttpStatus.NOT_FOUND.toString())?"redirect:/error":"redirect:/case-detail?cusID"+wrapper.getCustomer().getId();
 	}
 	
+	@PostMapping("/saveNewCase")
+	public String saveNewCase(@CookieValue(name="token") String token, @ModelAttribute("case") Cases cases) {
+		System.out.println(cases.getProduct().getName());
+		HashSet<Employee> newEmpSet = new HashSet<Employee>();
+		newEmpSet.add(getCurrentEmployeeUser(token));
+		cases.setEmployee(newEmpSet);
+		cases.setCasesStatus(CaseStatus.ACTIVE.toString());
+		cases.setStartDate(LocalDateTime.now());
+		Cases wrapper = restTemplate.exchange("http://localhost:8080/cases", HttpMethod.POST, entityGenerator(token, cases), Cases.class).getBody();
+		return wrapper.getCasesStatus().toString().equals(HttpStatus.NOT_FOUND.toString())?"redirect:/error":"redirect:/home";
+	}
+	
 	@GetMapping("/deleteCase")
 	public String deleteCase(@CookieValue(name="token") String token, @RequestParam("id") int id, @RequestParam("cusID") int cusID, Model model) {
 		ResponseEntity<Object> wrapper = restTemplate.exchange("http://localhost:8080/cases/id?id="+id, HttpMethod.DELETE, entityGenerator(token, null), Object.class);
@@ -89,5 +104,11 @@ public class CaseConsumerController {
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 			return new HttpEntity<T>(input, headers);
 		}
+	}
+	
+	private Employee getCurrentEmployeeUser(String token) {
+		String username = parser.getUsernameFromToken(token);
+		Employee wrapper = restTemplate.exchange("http://localhost:8080/employees/username?username="+username, HttpMethod.GET, entityGenerator(token, null), Employee.class).getBody();
+		return wrapper;
 	}
 }

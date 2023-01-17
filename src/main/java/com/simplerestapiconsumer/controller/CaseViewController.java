@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.simplerestapiconsumer.entity.Cases;
+import com.simplerestapiconsumer.entity.Customer;
+import com.simplerestapiconsumer.entity.Product;
 import com.simplerestapiconsumer.util.TokenParser;
 
 @Controller
@@ -44,12 +46,14 @@ public class CaseViewController {
 		return "list-customer-cases";
 	}
 	
-	@GetMapping("/cases")
-	public String showFormForNewCase(@CookieValue(name="token") String token, Model model) {
+	@GetMapping("/new-case")
+	public String showFormForNewCase(@CookieValue(name="token") String token, Model model, @RequestParam("id") int id) {
+		Customer cus = restTemplate.exchange("http://localhost:8080/customers/id?id="+id, HttpMethod.GET, entityGenerator(token, null), Customer.class).getBody();
+		List<Product> prods = restTemplate.exchange("http://localhost:8080/products", HttpMethod.GET, entityGenerator(token, null), new ParameterizedTypeReference<List<Product>>() {}).getBody();
 		Cases cases = new Cases();
-		cases.setStartDate(LocalDateTime.now());
-		cases.setCasesStatus("ACTIVE"); //temp
+		cases.setCustomer(cus);
 		model.addAttribute("case", cases);
+		model.addAttribute("product", prods);
 		return "new-case-form";
 	}
 	
