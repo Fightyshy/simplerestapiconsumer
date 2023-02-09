@@ -1,19 +1,15 @@
 package com.simplerestapiconsumer.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,18 +17,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.simplerestapiconsumer.SimplerestapiconsumerApplication;
 import com.simplerestapiconsumer.entity.Address;
 import com.simplerestapiconsumer.entity.Customer;
+import com.simplerestapiconsumer.util.EntityGenerator;
 
 
-@RestController
+@Controller
 public class CustomerConsumerController {
+	
+	private EntityGenerator entityGenerator = new EntityGenerator();
 	
 	private final Logger log;
 	private RestTemplate restTemplate;
@@ -44,7 +41,7 @@ public class CustomerConsumerController {
 
 	@GetMapping("/retrieve-customer-id")
 	public void retrieveCustomerByID(@CookieValue (name="token") String token, @RequestParam (name="id") int id) {
-		HttpEntity<String> entity = entityGenerator(token, null);
+		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id").queryParam("id", id);
 		
 		ResponseEntity<Customer> wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Customer.class);
@@ -53,7 +50,7 @@ public class CustomerConsumerController {
 	
 	@GetMapping("/retrieve-customer-firstname")
 	public void retrieveCustomerFirstname(@CookieValue (name="token") String token, @RequestParam(name="firstname") String firstName) {
-		HttpEntity<String> entity = entityGenerator(token, null);
+		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
  
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/firstname").queryParam("firstname", firstName);
 		
@@ -62,7 +59,7 @@ public class CustomerConsumerController {
 	}
 	@GetMapping("/retrieve-customer-lastname")
 	public void retrieveCustomerLastname(@CookieValue (name="token") String token, @RequestParam(name="lastname") String lastName) {
-		HttpEntity<String> entity = entityGenerator(token, null);
+		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customer/lastname").queryParam("lastname", lastName);
 		ResponseEntity<List<Customer>> wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, new ParameterizedTypeReference<List<Customer>>() {});
 		log.info(wrapper.getBody().toString());
@@ -75,7 +72,7 @@ public class CustomerConsumerController {
 			model.addObject("customer", customer);
 			return model;
 		}
-		HttpEntity<Customer> entity = entityGenerator(token, customer);
+		HttpEntity<Customer> entity = entityGenerator.entityGenerator(token, customer);
 		ResponseEntity<Customer> wrapper = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.POST, entity, Customer.class);
 		log.info("A new customer ("+wrapper.getBody().toString()+") was added to the database");
 		ModelAndView model = new ModelAndView("redirect:/home");
@@ -91,7 +88,7 @@ public class CustomerConsumerController {
 			return model;
 		}
 		address.setId(0);
-		HttpEntity<Address> entity = entityGenerator(token, address);
+		HttpEntity<Address> entity = entityGenerator.entityGenerator(token, address);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id/addresses").queryParam("cusId", id);
 		ResponseEntity<Address> wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, Address.class);
 		log.info("A new address was added to customer ("+wrapper.getBody().toString());
@@ -106,7 +103,7 @@ public class CustomerConsumerController {
 			model.addObject("customer", customer);
 			return model;
 		}
-		HttpEntity<Customer> entity = entityGenerator(token, customer);
+		HttpEntity<Customer> entity = entityGenerator.entityGenerator(token, customer);
 		ResponseEntity<Customer> wrapper = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.PUT, entity, Customer.class);
 		
 		log.info("A customer ("+wrapper.getBody().toString()+") was updated in the database");
@@ -125,7 +122,7 @@ public class CustomerConsumerController {
 			model.addObject("cusId", cusId);
 			return model;
 		}
-		HttpEntity<Address> entity  = entityGenerator(token, address);
+		HttpEntity<Address> entity  = entityGenerator.entityGenerator(token, address);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id/addresses").queryParam("cusId", cusId);
 		ResponseEntity<Address> wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entity, Address.class);
 		ModelAndView model = new ModelAndView("redirect:/show-customer?id="+cusId);
@@ -141,7 +138,7 @@ public class CustomerConsumerController {
 	
 	@GetMapping("/delete-customer")
 	public ModelAndView deleteCustomerDetails(@CookieValue(name="token") String token, @RequestParam int id) {
-		HttpEntity<String> entity = entityGenerator(token, null);
+		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		ResponseEntity<Object> wrapper = restTemplate.exchange(UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id").queryParam("id", id).toUriString(), HttpMethod.DELETE, entity, Object.class);
 		log.info("A customer was deleted");
 		ModelAndView model = new ModelAndView();
@@ -151,24 +148,11 @@ public class CustomerConsumerController {
 	
 	@GetMapping("/delete-customer-address")
 	public ModelAndView deleteCustomerAddress(@CookieValue(name="token") String token, @RequestParam(name="id") int id, @RequestParam(name="addressId") int addressId) {
-		HttpEntity<String> entity = entityGenerator(token, null);
+		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		ResponseEntity<Object> wrapper = restTemplate.exchange(UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id/addresses").queryParam("customerid", id).queryParam("addressid", addressId).toUriString(), HttpMethod.DELETE, entity, Object.class);
 		log.info("A customer's address was deleted");
 		ModelAndView model = new ModelAndView();
 		model.setViewName("redirect:show-customer?id="+id);
 		return model;
-	}
-	
-	private <T> HttpEntity<T> entityGenerator(String token, T input){
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.set("Authorization", "Bearer"+token);
-		
-		if(input==null) {
-			return new HttpEntity<T>(headers);		
-		}else {
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			return new HttpEntity<T>(input, headers);
-		}
 	}
 }
