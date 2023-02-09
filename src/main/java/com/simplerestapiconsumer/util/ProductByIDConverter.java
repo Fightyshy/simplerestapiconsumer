@@ -7,7 +7,6 @@ import org.springframework.web.client.RestTemplate;
 
 import com.simplerestapiconsumer.entity.Product;
 
-@Component
 public class ProductByIDConverter implements Converter<String, Product> {
 
 	@Autowired
@@ -16,7 +15,6 @@ public class ProductByIDConverter implements Converter<String, Product> {
 	@Override
 	public Product convert(String source) {
 		Product prod = restTemplate.getForObject("http://localhost:8080/products/id?id="+source, Product.class);
-//		System.out.println("test");
 		return prod;
 	}
 
