@@ -14,7 +14,7 @@ import com.simplecrmapiconsumer.validation.NumbersInStringOnly;
 
 public class Person {
 
-	private Integer id;
+	protected Integer id;
 
 	@NotNull
 	@NotEmpty

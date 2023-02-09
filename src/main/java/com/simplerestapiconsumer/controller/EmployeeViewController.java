@@ -25,13 +25,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simplerestapiconsumer.entity.Cases;
-import com.simplerestapiconsumer.entity.Customer;
 import com.simplerestapiconsumer.entity.Employee;
 import com.simplerestapiconsumer.entity.SocialMedia;
+import com.simplerestapiconsumer.util.EntityGenerator;
 import com.simplerestapiconsumer.util.TokenParser;
 
 @Controller
 public class EmployeeViewController {
+	private EntityGenerator entityGenerator = new EntityGenerator();
+	
 	private final Logger log;
 	private final RestTemplate restTemplate;
 	private final TokenParser tokenParser;
@@ -46,14 +48,14 @@ public class EmployeeViewController {
 	public String retrieveEmployeeAccountDetails(@CookieValue(name="token") String token, Model model, HttpServletRequest req) {
 		String username = tokenParser.getUsernameFromToken(token);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/employees/username").queryParam("username", username);
-		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator(token, null), Employee.class);
+		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator.entityGenerator(token, null), Employee.class);
 		model.addAttribute("employee", emp.getBody());
 		return req.getRequestURI().toString().equals("/account-details")?"account-details":"details-change";
 	}
 	
 	@GetMapping("/list-employees")
 	public String retrieveEmployees(@CookieValue(name="token") String token, Model model) {
-		ResponseEntity<List<Employee>> emps = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.GET, entityGenerator(token, null), new ParameterizedTypeReference<List<Employee>>() {});
+		ResponseEntity<List<Employee>> emps = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Employee>>() {});
 		model.addAttribute("employees",emps.getBody());
 		return "employee-list";
 	}
@@ -68,7 +70,7 @@ public class EmployeeViewController {
     	convert.setObjectMapper(mapper);
 		restTemplate.getMessageConverters().add(0, convert);
 		
-		ResponseEntity<Cases[]> cases = restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator(token, null), Cases[].class);
+		ResponseEntity<Cases[]> cases = restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases[].class);
 		model.addAttribute("cases", cases.getBody());
 		return "case-history";
 	}
@@ -80,18 +82,5 @@ public class EmployeeViewController {
 		emp.setSocialMedia(sm);
 		model.addAttribute("employee", emp);
 		return "new-employee-form";
-	}
-	
-	private <T> HttpEntity<T> entityGenerator(String token, T input){
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.set("Authorization", "Bearer"+token);
-		
-		if(input==null) {
-			return new HttpEntity<T>(headers);		
-		}else {
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			return new HttpEntity<T>(input, headers);
-		}
 	}
 }

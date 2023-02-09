@@ -103,4 +103,33 @@ public class Employee extends Person{
 	public void setCases(Set<Cases> cases) {
 		this.cases = cases;
 	}
+
+	//Set checker solution
+	//https://stackoverflow.com/questions/9318909/contains-method-not-calling-overridden-equals-method
+	@Override
+	public boolean equals(Object emp) {
+		if(emp instanceof Employee) {
+			Employee comparator = (Employee) emp;
+			return this.id.equals(comparator.id);
+		}
+		return false;
+		
+//		if(emp.getClass()!=this.getClass()) {
+//			return false;
+//		}
+//		
+//		Employee emped = (Employee) emp;
+//		
+//		return emped.getId()==this.getId()?true:false;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return id.hashCode(); //id is immutable in this case (either deleted along with entity or never changes
+	}
+	
+	
+	
+	
 }
