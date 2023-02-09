@@ -19,7 +19,7 @@
 
 </head>
 <body>
-	<form action="#" th:action="@{/update-customer-address}" th:object="${address}" th:method="put">
+	<form action="#" th:action="@{${#request.requestURI.equals('/update-customer-address-form')?'/update-customer-address':'/save-new-customer-address'}}" th:object="${address}" th:method="put">
 	
 		<input type="hidden" th:field="*{id}" th:value="${address.id}"/>
 		<input type="hidden" th:name="cusId" th:value="${cusId}"/>
