@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	<title>CRM Homepage</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Summary</th>
+		</tr>
+		
+		<tr th:each="products : ${product}">
+			<td th:text="${products.name}"/>
+			<td th:text="${products.summary}"/>
+			<td>
+				<a th:href="@{/update-product-form(prodID=${products.id})}" class="btn btn-primary">Update product details</a>
+				<a th:href="@{/delete-product(id=${products.id})}" class="btn btn-danger">Delete</a>
+			</td>
+			<!-- https://stackoverflow.com/questions/33753975/thymeleaf-using-path-variables-to-thhref -->
+		</tr>
+	</table>
+
+</body>
+</html>

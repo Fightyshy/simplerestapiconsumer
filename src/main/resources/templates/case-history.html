@@ -18,6 +18,7 @@
 			<th>Case end date</th>
 			<th>Customer first name</th>
 			<th>Customer last name</th>
+			<th>Actions</th>
 		</tr>
 		
 		<tr th:each="cases:${cases}">
@@ -26,6 +27,9 @@
 			<td th:text="${cases.endDate==null}?'-':${cases.endDate}"/>
 			<td th:text="${cases.customer.firstName}"/>
 			<td th:text="${cases.customer.lastName}"/>
+			<td>
+				<a th:href="@{/add-employee-to-case(caseID=${cases.id})}" class="btn btn-primary">Add employee to case</a>
+			</td>
 		</tr>
 	</table>	
 

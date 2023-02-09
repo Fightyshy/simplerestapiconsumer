@@ -16,6 +16,7 @@
 			<th>Status</th>
 			<th>Start Date</th>
 			<th>End Date</th>
+			<th>Summary</th>
 			<th>Assigned Employees</th>
 			<th>Actions</th>
 		</tr>
@@ -25,6 +26,7 @@
 			<td th:text="${case.casesStatus}"/>
 			<td th:text="${case.startDate}"/>
 			<td th:text="${case.endDate}"/>
+			<td th:text="${case.summary}"/>
 			<td><th:block th:each="emp:${case.employee}"><p th:text="${emp.firstName}"/></th:block></td>
 			<td><a th:href="@{/resolveCase(id=${case.id})}" class="btn btn-primary">Set Resolved</a>
 			<a th:href="@{/closeCase(id=${case.id})}" class="btn btn-primary">Set Closed</a>

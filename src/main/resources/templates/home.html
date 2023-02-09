@@ -18,6 +18,9 @@
 	<div th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
 		<a th:href="@{/save-new-employee-form}" class="btn btn-primary">Add new employee</a>
 		<a th:href="@{/list-employees}" class="btn btn-primary">See employees</a>
+		<a th:href="@{/list-products}" class="btn btn-primary">List all products</a>
+		<a th:href="@{/save-product-form}" class="btn btn-primary">Add new product</a>
+		<a th:href="@{/product-management}" class="btn btn-primary">Show products available</a>
 	</div>
 	
 	<a th:href="@{/save-new-customer-form}" class="btn btn-primary">Add new customer</a>
