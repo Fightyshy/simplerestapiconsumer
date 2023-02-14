@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import com.simplerestapiconsumer.entity.AddEmployeeDTO;
+import com.simplerestapiconsumer.entity.CaseUpdateDTO;
 import com.simplerestapiconsumer.entity.Cases;
 import com.simplerestapiconsumer.entity.Customer;
 import com.simplerestapiconsumer.entity.Employee;
@@ -38,11 +39,13 @@ public class CaseViewController {
 		this.parser = parser;
 	}
 	
+	//TODO returns 0 from modal, where the fuck is it not retrieving
 	@GetMapping("/case-details")
 	public String showCasesForCustomer(@CookieValue(name="token") String token, @RequestParam(name="cusID") int cusID, Model model) {
 		List<Cases> getCases = restTemplate.exchange("http://localhost:8080/cases/customers?id="+cusID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody();
 		model.addAttribute("cases", getCases);
 		model.addAttribute("role", parser.getAuthFromToken(token));
+		model.addAttribute("caseUpdate", new CaseUpdateDTO());
 		return "list-customer-cases";
 	}
 	

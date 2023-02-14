@@ -1,10 +1,10 @@
 package com.simplerestapiconsumer.enums;
 
 public enum CaseStatus {
-	ACTIVE ("active"), //being worked on
-	PENDING("pending"), //unknown status indicator
-	RESOLVED("resolved"), //closed with resolution
-	CLOSED("closed"); //closed with no resolution
+	ACTIVE ("Active"), //being worked on
+	PENDING("Pending"), //unknown status indicator
+	RESOLVED("Resolved"), //closed with resolution
+	CLOSED("Closed"); //closed with no resolution
 	
 	private final String displayName;
 	
