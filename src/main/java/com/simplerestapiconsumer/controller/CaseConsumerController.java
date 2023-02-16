@@ -47,14 +47,31 @@ public class CaseConsumerController {
 		this.parser = parser;
 	}
 
-	@PostMapping("/setCaseStatus")
+	@PostMapping({"/setCaseStatusCus", "/setCaseStatusEmp", "/setCaseStatusAll"})
 	public String updateCaseStatus(@CookieValue(name="token") String token, @ModelAttribute("caseUpdate") CaseUpdateDTO caseUpdate, Model model, HttpServletRequest req) throws Exception{
-		System.out.println(caseUpdate.getCaseId());
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/cases/status").queryParam("id", caseUpdate.getCaseId()).queryParam("status", caseUpdate.getStatus());
 		Cases wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.PUT, entityGenerator.entityGenerator(token, null), Cases.class).getBody();
 		StringBuilder logOutput = new StringBuilder().append("Case ID ").append(wrapper.getCustomer().getId()).append(" has been updated to ").append(wrapper.getCasesStatus()).append(" status");
 		log.info(logOutput.toString());
-		return "redirect:/case-details?cusID="+wrapper.getCustomer().getId();
+		
+		StringBuilder destination = new StringBuilder().append("redirect:/");
+
+		switch(req.getRequestURI().toString()) {
+		case "/setCaseStatusCus":
+			destination.append("case-details?cusID="+wrapper.getCustomer().getId());
+			break;
+		case "/setCaseStatusEmp":
+			destination.append("cases-history");
+			break;
+		case "/setCaseStatusAll":
+			destination.append("all-cases");
+			break;
+		default:
+			destination.append("error");
+			break;
+		}
+		
+		return destination.toString();
 	}
 	
 //	@Depreciated

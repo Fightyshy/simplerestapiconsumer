@@ -2,11 +2,16 @@ package com.simplerestapiconsumer.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -14,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simplerestapiconsumer.entity.AddEmployeeDTO;
 import com.simplerestapiconsumer.entity.CaseUpdateDTO;
 import com.simplerestapiconsumer.entity.Cases;
@@ -39,14 +47,56 @@ public class CaseViewController {
 		this.parser = parser;
 	}
 	
-	//TODO returns 0 from modal, where the fuck is it not retrieving
-	@GetMapping("/case-details")
-	public String showCasesForCustomer(@CookieValue(name="token") String token, @RequestParam(name="cusID") int cusID, Model model) {
-		List<Cases> getCases = restTemplate.exchange("http://localhost:8080/cases/customers?id="+cusID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody();
-		model.addAttribute("cases", getCases);
+//	@GetMapping("/case-details")
+//	public String showCasesForCustomer(@CookieValue(name="token") String token, @RequestParam(name="cusID") int cusID, Model model) {
+//		List<Cases> getCases = restTemplate.exchange("http://localhost:8080/cases/customers?id="+cusID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody();
+//		model.addAttribute("cases", getCases);
+//		model.addAttribute("role", parser.getAuthFromToken(token));
+//		model.addAttribute("caseUpdate", new CaseUpdateDTO());
+//		return "list-customer-cases";
+//	}
+//	
+//	//TODO resttemplate retrieval with custom DTO for display
+//	@GetMapping("/cases-history")
+//	public String retrieveCasesHistoryForUser(@CookieValue(name="token") String token, Model model) throws JsonMappingException, JsonProcessingException {
+//		//https://stackoverflow.com/questions/9381665/how-can-we-configure-the-internal-jackson-mapper-when-using-resttemplate
+//		//putting as bean seems to break everything but this specific case, attempt at later date
+//		ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build().findAndRegisterModules();
+//    	MappingJackson2HttpMessageConverter convert = new MappingJackson2HttpMessageConverter();
+//    	convert.setObjectMapper(mapper);
+//		restTemplate.getMessageConverters().add(0, convert);
+//		
+//		ResponseEntity<Cases[]> cases = restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases[].class);
+//		model.addAttribute("cases", cases.getBody());
+//		return "case-history";
+//	}
+	
+	@GetMapping({"all-cases", "case-details", "cases-history"})
+	public String retrieveCaseForAnything(@CookieValue(name="token") String token, Model model, @RequestParam(name="cusID", required=false) Integer cusID, HttpServletRequest req) {
 		model.addAttribute("role", parser.getAuthFromToken(token));
 		model.addAttribute("caseUpdate", new CaseUpdateDTO());
-		return "list-customer-cases";
+		switch(req.getRequestURI().toString()) {
+			case "/all-cases":
+				model.addAttribute("cases", restTemplate.exchange("http://localhost:8080/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody());
+				model.addAttribute("listState", "all");
+				break;
+			case "/case-details":
+				model.addAttribute("listState", "cus");
+				model.addAttribute("cases", restTemplate.exchange("http://localhost:8080/cases/customers?id="+cusID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody());
+				break;
+			case "/cases-history":
+				ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build().findAndRegisterModules();
+		    	MappingJackson2HttpMessageConverter convert = new MappingJackson2HttpMessageConverter();
+		    	convert.setObjectMapper(mapper);
+				restTemplate.getMessageConverters().add(0, convert);
+				model.addAttribute("listState", "emp");
+				model.addAttribute("cases", restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases[].class).getBody());
+				break;
+			default:
+				break;
+		}
+		
+		return "list-customer-cases"; //temp usage, name and function change pending
 	}
 	
 	@GetMapping("/new-case")

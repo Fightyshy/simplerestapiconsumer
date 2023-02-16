@@ -32,7 +32,7 @@
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal">Set status</button>
 				<th:block th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
 				<!-- TODO Confirmation dialog -->
-					<a th:href="@{/deleteCase(id=${case.id}, cusID=${case.customer.id})}" class="btn btn-danger">Delete Case</a>
+				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete case</button>
 				</th:block>
 				
 				<!-- could be useful in future, prev attempted solution with no results https://stackoverflow.com/questions/50464802/how-can-i-populate-value-at-form-inside-modal-using-bootstrap-and-thymeleaf -->
@@ -47,14 +47,30 @@
 							</div>
 							
 							<div class="modal-body">
-							<!-- winrar solution, th:field was overwriting th:value https://stackoverflow.com/questions/27859108/thymeleaf-thvalue-is-ignored-when-using-thfield -->
-								<form action="#" th:action="@{/setCaseStatus}" th:object="${caseUpdate}" method="post">
+							<!-- Model attribute workaround, also cleaner to read -->
+								<form action="#" th:action="${listState} == 'all' ? @{/setCaseStatusAll} : (${listState} == 'cus' ? @{/setCaseStatusCus} : @{/setCaseStatusEmp})" th:object="${caseUpdate}" method="post">
+									<!-- winrar solution, th:field was overwriting th:value https://stackoverflow.com/questions/27859108/thymeleaf-thvalue-is-ignored-when-using-thfield -->
 									<input type="hidden" th:name="caseId" th:id="caseId" th:value="${case.id}"/>
 									<select name="caseStatus" th:field="${caseUpdate.status}">
 										<option th:each="name : ${T(com.simplerestapiconsumer.enums.CaseStatus).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
 									</select>
 									<button type="submit" class="btn btn-primary">Save status</button>
 								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" area-labelledby="confirmDeleteModal" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="confirmDeleteModal">Are you sure you want to delete this case? This can not be undone.</h5>
+							</div>
+							
+							<div class="modal-body">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<a th:href="@{/deleteCase(id=${case.id}, cusID=${case.customer.id})}" class="btn btn-danger">Delete Case</a>
 							</div>
 						</div>
 					</div>

@@ -1,16 +1,12 @@
 package com.simplerestapiconsumer.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -60,19 +57,11 @@ public class EmployeeViewController {
 		return "employee-list";
 	}
 	
-	//TODO resttemplate retrieval with custom DTO for display
-	@GetMapping("/cases-history")
-	public String retrieveCasesHistoryForUser(@CookieValue(name="token") String token, Model model) throws JsonMappingException, JsonProcessingException {
-		//https://stackoverflow.com/questions/9381665/how-can-we-configure-the-internal-jackson-mapper-when-using-resttemplate
-		//putting as bean seems to break everything but this specific case, attempt at later date
-		ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build().findAndRegisterModules();
-    	MappingJackson2HttpMessageConverter convert = new MappingJackson2HttpMessageConverter();
-    	convert.setObjectMapper(mapper);
-		restTemplate.getMessageConverters().add(0, convert);
-		
-		ResponseEntity<Cases[]> cases = restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases[].class);
-		model.addAttribute("cases", cases.getBody());
-		return "case-history";
+	@GetMapping("/update-employee-form")
+	public String updateEmployeeForm(@CookieValue(name="token") String token, Model model, @RequestParam(name="id") int id) {
+		Employee emp = restTemplate.exchange("http://localhost:8080/employees/id?id="+id, HttpMethod.GET, entityGenerator.entityGenerator(token, null), Employee.class).getBody();
+		model.addAttribute("employee", emp);
+		return "employee-form";
 	}
 	
 	@GetMapping("/save-new-employee-form")
@@ -81,6 +70,6 @@ public class EmployeeViewController {
 		SocialMedia sm = new SocialMedia();
 		emp.setSocialMedia(sm);
 		model.addAttribute("employee", emp);
-		return "new-employee-form";
+		return "employee-form";
 	}
 }
