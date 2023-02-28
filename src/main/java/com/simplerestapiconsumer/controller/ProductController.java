@@ -30,6 +30,8 @@ public class ProductController {
 		this.log = log;
 	}
 	
+	//View endpoints
+	
 	@GetMapping("/list-products")
 	public String showAllProducts(@CookieValue(name="token") String token, Model model) {
 		List<Product> listProds = restTemplate.exchange("http://localhost:8080/products", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Product>>() {}).getBody();
@@ -52,13 +54,15 @@ public class ProductController {
 		
 	}
 	
-	@GetMapping("/delete-product")
+	//Consumer endpoints
+	
+	@GetMapping("/deleteProduct")
 	 public String deleteProduct(@CookieValue(name="token") String token, Model model, @RequestParam("id") int id) {
 		 restTemplate.exchange("http://localhost:8080/products/id?id="+id, HttpMethod.DELETE, entityGenerator.entityGenerator(token, null), Object.class);
 		 return "redirect:/list-products";
 	 }
 
-	@PostMapping("/save-product")
+	@PostMapping("/saveProduct")
 	public String saveProduct(@CookieValue(name="token") String token, Model model, @ModelAttribute("product") Product prod) {
 		log.info(prod.getSummary());
 		ResponseEntity<Product> savedProduct = restTemplate.exchange("http://localhost:8080/products", HttpMethod.POST, entityGenerator.entityGenerator(token, prod), Product.class);
@@ -66,7 +70,7 @@ public class ProductController {
 		return "redirect:/list-products";
 	}
 	
-	@PostMapping("/update-product")
+	@PostMapping("/updateProduct")
 	public String updateProduct(@CookieValue(name="token") String token, Model model, @ModelAttribute("product") Product prod) {
 		ResponseEntity<Product> updated = restTemplate.exchange("http://localhost:8080/products", HttpMethod.PUT, entityGenerator.entityGenerator(token, prod), Product.class);
 		log.info("Product id " + updated.getBody().getId()+" has been updated successfully");

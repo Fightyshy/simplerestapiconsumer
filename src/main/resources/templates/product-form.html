@@ -15,13 +15,13 @@
 
 		<input type="hidden" th:field="*{id}" th:value="${product.id}"/>
 
-		<label th:for="name">Product name</label>
-		<input type="text" th:field="*{name}"/>
+		<label th:for="name" class="form-label">Product name</label>
+		<input type="text" th:field="*{name}" class="form-control"/>
 		
-		<label th:for="summary">Description</label>
-		<input type="text" th:maxlength="500" th:field="*{summary}"/>
+		<label th:for="summary" class="form-label">Description</label>
+		<input type="text" th:maxlength="500" th:field="*{summary}"  class="form-control"/>
 		
-		<button type="submit">Save new product</button>
+		<button type="submit" class="btn btn-primary">Save new product</button>
 	</form>
 </body>
 </html>

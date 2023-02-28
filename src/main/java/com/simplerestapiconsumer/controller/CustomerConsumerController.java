@@ -39,7 +39,7 @@ public class CustomerConsumerController {
 		this.restTemplate = restTemplate;
 	}
 
-	@GetMapping("/retrieve-customer-id")
+	@GetMapping("/getCustomerByID")
 	public void retrieveCustomerByID(@CookieValue (name="token") String token, @RequestParam (name="id") int id) {
 		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id").queryParam("id", id);
@@ -48,7 +48,7 @@ public class CustomerConsumerController {
 		log.info(wrapper.getBody().toString());
 	}
 	
-	@GetMapping("/retrieve-customer-firstname")
+	@GetMapping("/getCustomerByFirstname")
 	public void retrieveCustomerFirstname(@CookieValue (name="token") String token, @RequestParam(name="firstname") String firstName) {
 		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
  
@@ -57,7 +57,7 @@ public class CustomerConsumerController {
 		ResponseEntity<List<Customer>> wrapper = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, new ParameterizedTypeReference<List<Customer>>() {});
 		log.info(wrapper.getBody().toString());
 	}
-	@GetMapping("/retrieve-customer-lastname")
+	@GetMapping("/getCustomerByLastname")
 	public void retrieveCustomerLastname(@CookieValue (name="token") String token, @RequestParam(name="lastname") String lastName) {
 		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/customer/lastname").queryParam("lastname", lastName);
@@ -65,7 +65,7 @@ public class CustomerConsumerController {
 		log.info(wrapper.getBody().toString());
 	}
 	
-	@PostMapping("/save-new-customer")
+	@PostMapping("/saveCustomer")
 	public ModelAndView saveNewCustomerDetails(@CookieValue(name="token") String token, @Valid @ModelAttribute(name="customer") Customer customer, BindingResult result) {
 		if(result.hasErrors()) {
 			ModelAndView model = new ModelAndView("new-customer-form.html");
@@ -79,7 +79,7 @@ public class CustomerConsumerController {
 		return model;
 	}
 	
-	@PostMapping("/save-new-customer-address")
+	@PostMapping("/saveCustomerAddress")
 	public ModelAndView saveNewCustomerAddress(@CookieValue(name="token") String token, @Valid @ModelAttribute(name="address") Address address, BindingResult result, @RequestParam(name="cusId") int id) {
 		if(result.hasErrors()) {
 			ModelAndView model = new ModelAndView("new-address-form.html");
@@ -96,7 +96,7 @@ public class CustomerConsumerController {
 		return model;
 	}
 	
-	@PutMapping("/update-customer")
+	@PostMapping("/updateCustomer")
 	public ModelAndView updateCustomerDetails(@CookieValue(name="token") String token, @Valid @ModelAttribute(name="customer") Customer customer, BindingResult result) {
 		if(result.hasErrors()) {
 			ModelAndView model = new ModelAndView("new-address-form.html");
@@ -114,7 +114,7 @@ public class CustomerConsumerController {
 	
 	
 	//need to cross customer id somehow
-	@PutMapping("/update-customer-address")
+	@PostMapping("/updateCustomerAddress")
 	public ModelAndView updateCustomerAddress(@CookieValue(name="token") String token, @Valid @ModelAttribute(name="address") Address address, BindingResult result, @RequestParam(name="cusId") int cusId) {
 		if(result.hasErrors()) {
 			ModelAndView model = new ModelAndView("new-address-form.html");
@@ -130,13 +130,7 @@ public class CustomerConsumerController {
 		return model;
 	}
 	
-//	@PutMapping("/update-customer-socialmedia")
-//	public void updateCustomerSocialMedia(@CookieValue(name="token") String token, @Valid @RequestBody SocialMedia socialMedia) {
-//		HttpEntity<SocialMedia> entity = entityGenerator(token, socialMedia);
-//		ResponseEntity<SocialMedia> wrapper = restTemplate.exchange("http://localhost:8080/customers/id/socialmedia", HttpMethod.PUT, entity, SocialMedia.class);
-//	}
-	
-	@GetMapping("/delete-customer")
+	@GetMapping("/deleteCustomer")
 	public ModelAndView deleteCustomerDetails(@CookieValue(name="token") String token, @RequestParam int id) {
 		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		ResponseEntity<Object> wrapper = restTemplate.exchange(UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id").queryParam("id", id).toUriString(), HttpMethod.DELETE, entity, Object.class);
@@ -146,7 +140,7 @@ public class CustomerConsumerController {
 		return model;
 	}
 	
-	@GetMapping("/delete-customer-address")
+	@GetMapping("/deleteCustomerAddress")
 	public ModelAndView deleteCustomerAddress(@CookieValue(name="token") String token, @RequestParam(name="id") int id, @RequestParam(name="addressId") int addressId) {
 		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
 		ResponseEntity<Object> wrapper = restTemplate.exchange(UriComponentsBuilder.fromUriString("http://localhost:8080/customers/id/addresses").queryParam("customerid", id).queryParam("addressid", addressId).toUriString(), HttpMethod.DELETE, entity, Object.class);

@@ -41,15 +41,9 @@ public class CustomerViewController {
 	
 	@GetMapping("/home")
 	public String retrieveAllCustomers(@CookieValue (name="token") String token, HttpServletRequest request, Model model) {		
-		HttpEntity<String> entity = entityGenerator.entityGenerator(token, null);
-		
-		ResponseEntity<List<Customer>> wrapper = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Customer>>() {});
+		ResponseEntity<List<Customer>> wrapper = restTemplate.exchange("http://localhost:8080/customers", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Customer>>() {});
 //		https://www.baeldung.com/spring-resttemplate-json-list
-		
-		for(Customer cus: wrapper.getBody()) {
-			log.info(cus.toString());
-		}
-		log.info(tokenProvider.getAuthFromToken(token).toString());
+
 		request.removeAttribute("cusId");
 		model.addAttribute("customer", wrapper.getBody());
 		model.addAttribute("username", tokenProvider.getUsernameFromToken(token));

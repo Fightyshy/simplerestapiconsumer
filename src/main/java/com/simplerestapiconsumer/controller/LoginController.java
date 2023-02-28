@@ -26,12 +26,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.simplerestapiconsumer.entity.EmailWrapper;
 import com.simplerestapiconsumer.entity.Login;
 import com.simplerestapiconsumer.entity.ResetPW;
+import com.simplerestapiconsumer.util.EntityGenerator;
 
 @Controller
 public class LoginController {
@@ -39,6 +42,8 @@ public class LoginController {
 	private RestTemplate restTemplate;
 	private final Logger log;
 	private JavaMailSender mailSender;
+	
+	private EntityGenerator entityGenerator = new EntityGenerator();
 	
 	public LoginController(RestTemplate restTemplate, Logger log, JavaMailSender mailSender) {
 		this.restTemplate = restTemplate;
@@ -65,33 +70,26 @@ public class LoginController {
 	
 	//actual login
 	@PostMapping("/retrieve-token")
-	public String retrieveTokenFromServer(@ModelAttribute("login") Login login, BindingResult br, HttpServletResponse res) {
-		if(br.hasErrors()) {
-			return "redirect:/loginpage";
-		}
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		headers.add("Location", "/home");
-		//https://stackoverflow.com/questions/10358345/making-authenticated-post-requests-with-spring-resttemplate-for-android
-		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter()); //converts requestbody to json for post
-
-		HttpEntity<Login> entity = new HttpEntity<>(login, headers); //no need to convert, insert requestbody directly
-		
-		ResponseEntity<String> token = restTemplate.exchange("http://localhost:8080/users/authenticate", HttpMethod.POST, entity, String.class);
-		
-		if(token.getStatusCode().equals(HttpStatus.OK)) {
+	public String retrieveTokenFromServer(@ModelAttribute("login") Login login, HttpServletResponse res, RedirectAttributes redir) {
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+			headers.add("Location", "/home");
+			//https://stackoverflow.com/questions/10358345/making-authenticated-post-requests-with-spring-resttemplate-for-android
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter()); //converts requestbody to json for post
+	
+			HttpEntity<Login> entity = new HttpEntity<>(login, headers); //no need to convert, insert requestbody directly
+			
+			ResponseEntity<String> token = restTemplate.exchange("http://localhost:8080/users/authenticate", HttpMethod.POST, entity, String.class);
 			Cookie cookie = new Cookie("token", (String) token.getBody().toString());
 			res.addCookie(cookie);
-			
+			log.info("User "+login.getUsername()+" has successfully logged in");
 			return "redirect:/home";
-		}else {
-			log.info("Failed to log in "+login.getUsername()+" due to invalid credentials");
+		}catch(HttpClientErrorException e) {
+			redir.addFlashAttribute("pwerror", "Incorrect username or password.");
+			log.info("Failed login attempt due to invalid credentials, working as normal");
 			return "redirect:/loginpage";
 		}
-//		ResponseCookie tokenCookie = ResponseCookie.from("token", token.getBody().toString()).httpOnly(true).secure(false).build();
-//		
-//		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
 	}
 	
 	//processes token with /password-reset
@@ -137,7 +135,7 @@ public class LoginController {
 	@GetMapping("/password-reset")
 	public String showPasswordResetPage(Model model, @RequestParam("pwtoken") String token) {
 		UriComponentsBuilder recovery = UriComponentsBuilder.fromUriString("http://localhost:8080/tokenChecker").queryParam("token", token);
-		ResponseEntity<Object> checker = restTemplate.exchange(recovery.toUriString(), HttpMethod.GET, entityGenerator(token), Object.class);
+		ResponseEntity<Object> checker = restTemplate.exchange(recovery.toUriString(), HttpMethod.GET, entityGenerator.entityGenerator(token, null), Object.class);
 		if(checker.getStatusCode().equals(HttpStatus.UNAUTHORIZED)) {
 			return "error/pwreset";
 		}
@@ -195,18 +193,5 @@ public class LoginController {
 		
 		mailSender.send(mail);
 		log.info("Password recovery email sent out to "+ email);
-	}
-	
-	private <T> HttpEntity<T> entityGenerator(T input){
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-//		headers.set("Authorization", "Bearer"+token);
-		
-		if(input==null) {
-			return new HttpEntity<T>(headers);		
-		}else {
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			return new HttpEntity<T>(input, headers);
-		}
 	}
 }

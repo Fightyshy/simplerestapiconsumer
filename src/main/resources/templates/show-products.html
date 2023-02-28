@@ -10,22 +10,50 @@
 	<title>CRM Homepage</title>
 </head>
 <body>
-	<table>
+	<div class="container">
+		<div class="row justify-content-left">
+			<div class="col-sm">	<a th:href="@{/save-product-form}" class="btn btn-primary w-100">Add new product</a></div>
+		</div>
+	</div>
+
+	<table class="table">
 		<tr>
+			<th>Product ID</th>
 			<th>Name</th>
 			<th>Summary</th>
+			<th>Actions</th>
 		</tr>
 		
 		<tr th:each="products : ${product}">
+			<td th:text="${products.id}"/>
 			<td th:text="${products.name}"/>
 			<td th:text="${products.summary}"/>
 			<td>
 				<a th:href="@{/update-product-form(prodID=${products.id})}" class="btn btn-primary">Update product details</a>
-				<a th:href="@{/delete-product(id=${products.id})}" class="btn btn-danger">Delete</a>
+				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete product</button>
+				
+				<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="confirmDeleteModal">Are you sure you want to delete this product? This can not be undone.</h5>
+							</div>
+							
+							<div class="modal-body">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<a th:href="@{/deleteProduct(id=${products.id})}" class="btn btn-danger">Delete Case</a>
+							</div>
+						</div>
+					</div>
+				</div>
 			</td>
 			<!-- https://stackoverflow.com/questions/33753975/thymeleaf-using-path-variables-to-thhref -->
 		</tr>
 	</table>
 
+	<!-- JS imports for boostrap functionality -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

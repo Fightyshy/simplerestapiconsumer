@@ -27,7 +27,7 @@ public class CustomerDBLoggerAspect {
 	public void customerPointcut() {
 		
 	}
-	
+	//https://medium.com/@KosteRico/spring-aop-in-2021-level-up-your-logging-8d1498242ba2
 	@Before("customerPointcut()")
 	public void logEndpointSelected(JoinPoint joinPoint) {
 		MethodSignature sig = (MethodSignature) joinPoint.getSignature();

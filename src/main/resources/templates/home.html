@@ -10,29 +10,29 @@
 	<title>CRM Homepage</title>
 </head>
 <body>
-
-	<a th:href="@{/account-details}" class="btn btn-primary">Account details</a>
-	<a th:href="@{/cases-history}" class="btn btn-primary">Case history</a>
-	<a th:href="@{/add-case}" class="btn btn-primary">Add case</a>
-	
-	<div th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
-		<a th:href="@{/save-new-employee-form}" class="btn btn-primary">Add new employee</a>
-		<a th:href="@{/list-employees}" class="btn btn-primary">See employees</a>
-		<a th:href="@{/list-products}" class="btn btn-primary">List all products</a>
-		<a th:href="@{/save-product-form}" class="btn btn-primary">Add new product</a>
-		<a th:href="@{/product-management}" class="btn btn-primary">Show products available</a>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm"><a th:href="@{/account-details}" class="btn btn-primary w-100">Account details</a></div>
+			<div class="col-sm"><a th:href="@{/cases-history}" class="btn btn-primary w-100">Case history</a></div>
+			<div class="col-sm"><a th:href="@{/save-new-customer-form}" class="btn btn-primary w-100">Add new customer</a></div>
+			<div class="col-sm"><a th:href="@{/logout}" class="btn btn-danger w-100">Logout</a></div>
+		</div>
+		
+		<div class="row justify-content-left" th:if="${#lists.contains(role, &quot;ROLE_MANAGER&quot;) OR #lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
+			<div class="col-sm"><a th:href="@{/list-employees}" class="btn btn-primary w-100">See employees</a></div>
+			<div class="col-sm"><a th:href="@{/list-products}" class="btn btn-primary w-100">List all products</a></div>
+			<div class="col-sm"><a th:href="@{/all-cases}" class="btn btn-primary w-100">List all cases</a></div>
+		</div>
 	</div>
-	
-	<a th:href="@{/save-new-customer-form}" class="btn btn-primary">Add new customer</a>
-	<a th:href="@{/logout}" class="btn btn-danger">Logout</a>
-	
-	<table>
+
+	<div class="container">
+	<table class="table">
 		<tr>
 			<th>First name</th>
 			<th>Last name</th>
 			<th>Email address</th>
 			<th>Phone number</th>
-			<th>Show full profile</th>
+			<th>Actions</th>
 		</tr>
 		
 		<tr th:each="customers : ${customer}">
@@ -43,11 +43,11 @@
 			<td><a th:href="@{/show-customer(id=${customers.id})}" class="btn btn-primary">Details</a>
 			<a th:href="@{/new-case(id=${customers.id})}" class="btn btn-primary">Add new case to customer</a>
 			<a th:href="@{/case-details(cusID=${customers.id})}" class="btn btn-primary">Check customer cases</a>
-			<a th:href="@{/delete-customer(id=${customers.id})}" class="btn btn-danger">Delete</a>
+			<a th:href="@{/deleteCustomer(id=${customers.id})}" class="btn btn-danger">Delete</a>
 			</td>
 			<!-- https://stackoverflow.com/questions/33753975/thymeleaf-using-path-variables-to-thhref -->
 		</tr>
 	</table>
-
+	</div>
 </body>
 </html>

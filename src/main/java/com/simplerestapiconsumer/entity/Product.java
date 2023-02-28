@@ -1,7 +1,7 @@
 package com.simplerestapiconsumer.entity;
 public class Product {
 	
-	private int id;
+	private Integer id;
 
 	private String name;
 
@@ -10,7 +10,7 @@ public class Product {
 	public Product() {
 	}
 
-	public Product(int id, String name, String summary) {
+	public Product(Integer id, String name, String summary) {
 		this.id = id;
 		this.name = name;
 		this.summary = summary;
@@ -25,7 +25,7 @@ public class Product {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

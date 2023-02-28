@@ -11,68 +11,98 @@
 	<title>Show customer details</title>
 </head>
 <body>
-	<form action="#" th:action="@{${#request.requestURI.equals('/save-new-customer-form')?'/save-new-customer':'/update-customer'}}" th:object="${customer}" th:method="put">
+	<form action="#" th:action="@{${#request.requestURI.equals('/save-new-customer-form')?'/saveCustomer':'/updateCustomer'}}" th:object="${customer}" th:method="put">
 
 		<input type="hidden" th:field="*{id}" th:value="${customer.id}"/>
+		
+		<div class="row">
+			<div class="col-sm">
+				<label th:for="firstName" class="form-label">First name</label>
+				<input type="text" th:field="*{firstName}" class="form-control" aria-describedby="nameHelp"/>
+				<p th:if="${#fields.hasErrors('firstName')}">Please enter a valid name</p>
+			</div>
+			
+			<div class="col-sm">
+				<label th:for="middleName" class="form-label">Middle name(s)</label>
+				<input type="text" th:field="*{middleName}" class="form-control" aria-describedby="nameHelp"/>
+				<p th:if="${#fields.hasErrors('middleName')}">Please enter a valid name</p>
+			</div>
+			
+			<div class="col-sm">
+				<label th:for="lastName" class="form-label">Last name</label>
+				<input type="text" th:field="*{lastName}" class="form-control" aria-describedby="nameHelp"/>
+				<p th:if="${#fields.hasErrors('lastName')}">Please enter a valid name</p>
+			</div>
+			
+			<div class="form-text" id="nameHelp">Names should only consist of latin alphabet characters.</div>
+		</div>
 	
-		<label th:for="firstName">First name</label>
-		<input type="text" th:field="*{firstName}"/>
-		<p th:if="${#fields.hasErrors('firstName')}">Please enter a valid name</p>
-		<br>
-		<label th:for="middleName">Middle name(s)</label>
-		<input type="text" th:field="*{middleName}"/>
-		<p th:if="${#fields.hasErrors('middleName')}">Please enter a valid name</p>
-		<br>
-		<label th:for="lastName">Last name</label>
-		<input type="text" th:field="*{lastName}"/>
-		<p th:if="${#fields.hasErrors('lastName')}">Please enter a valid name</p>
-		<br>
-		<label th:for="dateOfBirth">Date of birth</Label>
-		<input type="date" th:field="*{dateOfBirth}"/>
-		<p th:if="${#fields.hasErrors('dateOfBirth')}">Please enter a valid date of birth over 18 years of age</p>
-		<br>
-		<label th:for="phoneNumber">Phone number</label>
-		<input type="text" th:field="*{phoneNumber}"/>
-		<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
-		<br>
-		<label th:for="emailAddress">Email address</label>
-		<input type="email" th:field="*{emailAddress}"/>
-		<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
-		<br>
-		<label th:for="prefComms">Preferred method of contact</label>
-		<input type="text" th:field="*{prefComms}"/>
-		<br>
-		<label th:for="occupation">Occupation</label>
-		<input type="text" th:field="*{occupation}"/>
-		<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
-		<br>
-		<label th:for="industry">Industry</label>
-		<input type="text" th:field="*{industry}"/>
-		<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
-		<br>
+		<div class="row">
+				<div class="col-sm">
+				<label th:for="dateOfBirth" class="form-label">Date of birth</Label>
+				<input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+				<p th:if="${#fields.hasErrors('dateOfBirth')}">Please enter a valid date of birth over 18 years of age</p>
+			</div>
+			
+			<div class="col-sm">
+				<label th:for="phoneNumber" class="form-label">Phone number</label>
+				<input type="text" th:field="*{phoneNumber}" class="form-control" aria-describedby="phoneHelp"/>
+				<div class="form-text" id="phoneHelp">Ensure this is the primary business phone number of the customer, mobile phone numbers are valid.</div>
+				<p th:if="${#fields.hasErrors('phoneNumber')}">Please enter a valid phone number</p>
+			</div>
+			
+			<div class="col-sm">
+				<label th:for="emailAddress" class="form-label">Email address</label>
+				<input type="email" th:field="*{emailAddress}" class="form-control" aria-describedby="emailHelp"/>
+				<div class="form-text" id="emailHelp">Ensure this is the primary business email address of the customer, not a personal one.</div>
+				<p th:if="${#fields.hasErrors('emailAddress')}">Please enter a valid email address</p>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm">
+			<label th:for="prefComms" class="form-label">Preferred method of contact</label>
+			<input type="text" th:field="*{prefComms}" class="form-control" aria-describedby="phoneHelp"/>
+			</div>
+			
+			<div class="col-sm">
+			<label th:for="occupation" class="form-label">Occupation</label>
+			<input type="text" th:field="*{occupation}" class="form-control" aria-describedby="phoneHelp"/>
+			<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
+			</div>
+			
+			<div class="col-sm">
+			<label th:for="industry" class="form-label">Industry</label>
+			<input type="text" th:field="*{industry}" class="form-control" aria-describedby="phoneHelp"/>
+			<p th:if="${#fields.hasErrors('occupation')}">Please use alphabetical characters only</p>
+			</div>
+			<div class="form-text" id="vocationHelp">All fields here should be filled to the best relevancy for that customer.</div>
+		</div>
+
 		<input type="hidden" th:field="*{socialMedia.id}" th:value="*{socialMedia.id}"/>
-		<br>
-		<label th:for="socialMedia.preferredSocialMedia">Select customer preferred social media</label>
-		<select name="socialMediaNames" th:field="${customer.socialMedia.preferredSocialMedia}">
-			<option th:each="name : ${T(com.simplerestapiconsumer.enums.SocialMediaNames).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
-		</select>
-		<br>
-		<label th:for="socialMedia.facebookHandle">Facebook</label>
-		<input type="text" th:field="*{socialMedia.facebookHandle}" th:value="*{socialMedia.facebookHandle}"/>
-		<br>
-		<label th:for="socialMedia.twitterHandle">Twitter</label>
-		<input type="text" th:field="*{socialMedia.twitterHandle}" th:value="*{socialMedia.twitterHandle}"/>
-		<br>
-		<label th:for="socialMedia.instagramHandle">Instagram</label>
-		<input type="text" th:field="*{socialMedia.instagramHandle}" th:value="*{socialMedia.instagramHandle}" />
-		<br>
-		<label th:for="socialMedia.lineHandle">Line</label>
-		<input type="text" th:field="*{socialMedia.lineHandle}" th:value="*{socialMedia.lineHandle}" />
-		<br>
-		<label th:for="socialMedia.whatsappHandle">Whatsapp</label>
-		<input type="text" th:field="*{socialMedia.whatsappHandle}" th:value="*{socialMedia.whatsappHandle}" />
-		<br>
-		<button type="submit">Save customer details</button>
+		<div class="row">
+			<label th:for="socialMedia.preferredSocialMedia" class="form-label">Select customer preferred social media</label>
+			<select name="socialMediaNames" th:field="${customer.socialMedia.preferredSocialMedia}" class="form-select">
+				<option th:each="name : ${T(com.simplerestapiconsumer.enums.SocialMediaNames).values()}"  th:value="${name}" th:text="${name.displayName}"></option>
+			</select>
+	
+			<label th:for="socialMedia.facebookHandle" class="form-label">Facebook</label>
+			<input type="text" th:field="*{socialMedia.facebookHandle}" th:value="*{socialMedia.facebookHandle}" class="form-control" aria-describedby="NONEHelp"/>
+	
+			<label th:for="socialMedia.twitterHandle" class="form-label">Twitter</label>
+			<input type="text" th:field="*{socialMedia.twitterHandle}" th:value="*{socialMedia.twitterHandle}" class="form-control" aria-describedby="NONEHelp"/>
+	
+			<label th:for="socialMedia.instagramHandle" class="form-label">Instagram</label>
+			<input type="text" th:field="*{socialMedia.instagramHandle}" th:value="*{socialMedia.instagramHandle}" class="form-control" aria-describedby="NONEHelp"/>
+	
+			<label th:for="socialMedia.lineHandle" class="form-label">Line</label>
+			<input type="text" th:field="*{socialMedia.lineHandle}" th:value="*{socialMedia.lineHandle}" class="form-control" aria-describedby="NONEHelp"/>
+	
+			<label th:for="socialMedia.whatsappHandle" class="form-label">Whatsapp</label>
+			<input type="text" th:field="*{socialMedia.whatsappHandle}" th:value="*{socialMedia.whatsappHandle}" class="form-control" aria-describedby="NONEHelp"/>
+			<div class="form-text" id="NONEHelp">Please enter &quot;NONE&quot; for handles that are not shared by the customer"</div>
+		</div>
+		<button type="submit" class="btn btn-primary">Save customer details</button>
 	</form>
 </body>
 </html>

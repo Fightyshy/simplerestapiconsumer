@@ -80,7 +80,7 @@
 				<td th:text="${address.city}" />
 				<td th:text="${address.phoneNumber}" />
 				<td th:text="${address.faxNumber}" />
-				<td><a th:href="@{/update-customer-address-form(id=${customer.id},addressId=${address.id})}">Edit</a> <a th:method="delete" th:href="@{/delete-customer-address(id=${customer.id}, addressId=${address.id})}">Delete</a></td>
+				<td><a th:href="@{/update-customer-address-form(id=${customer.id},addressId=${address.id})}">Edit</a> <a th:method="delete" th:href="@{/deleteCustomerAddress(id=${customer.id}, addressId=${address.id})}">Delete</a></td>
 			</tr>
 		</table>
 	</form>

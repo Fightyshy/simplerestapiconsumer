@@ -10,7 +10,7 @@
 	<title>CRM Homepage</title>
 </head>
 <body>
-	<table>
+	<table class="table">
 		<tr>
 			<th>Case ID</th>
 			<th>Status</th>
@@ -30,9 +30,14 @@
 			<td><th:block th:each="emp:${case.employee}"><p th:text="${emp.firstName}"/></th:block></td>
 			<td>
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statusModal">Set status</button>
+				
+				<th:block th:if="${#lists.contains(role, &quot;ROLE_MANAGER&quot;) OR #lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addEmployeeModal">Add employee to case (Max 5)</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeEmployeeModal">Remove employee from case</button>
+				</th:block>
+				
 				<th:block th:if="${#lists.contains(role, &quot;ROLE_ADMIN&quot;)}">
-				<!-- TODO Confirmation dialog -->
-				<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete case</button>
+					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete case</button>
 				</th:block>
 				
 				<!-- could be useful in future, prev attempted solution with no results https://stackoverflow.com/questions/50464802/how-can-i-populate-value-at-form-inside-modal-using-bootstrap-and-thymeleaf -->
@@ -61,7 +66,30 @@
 					</div>
 				</div>
 				
-				<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" area-labelledby="confirmDeleteModal" aria-hidden="true">
+				<div class="modal fade" id="addEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="addEmployeeModal" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="addEmployeeModal">Add employee to existing case</h5>
+							</div>
+							
+							<div class="modal-body">
+							<p>A maximum of 5 employees is allowed on one case at any time</p>
+							<form action="#" th:action="@{/addEmployeeToCaseByID}" th:object="${empToAdd}" method="post">
+								<input type="hidden" th:name="caseId" th:id="caseId" th:value="${case.id}"/>
+								<input type="text" class="form-control" th:field="*{ID}"/>
+								<label th:for="empToAdd.ID" class="form-label">Enter an employee's ID</label>
+								<th:block>
+									<p th:text="${errorMessage}"/>
+								</th:block>
+								<button type="submit" class="btn btn-primary">Add employee</button>
+							</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
@@ -75,6 +103,10 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Manager+ add employee to case -->
+				
+				
 			</td>
 		</tr>
 	</table>

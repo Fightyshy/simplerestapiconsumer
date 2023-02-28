@@ -47,6 +47,7 @@ public class EmployeeViewController {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://localhost:8080/employees/username").queryParam("username", username);
 		ResponseEntity<Employee> emp = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entityGenerator.entityGenerator(token, null), Employee.class);
 		model.addAttribute("employee", emp.getBody());
+		model.addAttribute("empCases", emp.getBody().getCasesActive()+emp.getBody().getCasesPending());
 		return req.getRequestURI().toString().equals("/account-details")?"account-details":"details-change";
 	}
 	
@@ -54,6 +55,7 @@ public class EmployeeViewController {
 	public String retrieveEmployees(@CookieValue(name="token") String token, Model model) {
 		ResponseEntity<List<Employee>> emps = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Employee>>() {});
 		model.addAttribute("employees",emps.getBody());
+		model.addAttribute("role", tokenParser.getAuthFromToken(token));
 		return "employee-list";
 	}
 	

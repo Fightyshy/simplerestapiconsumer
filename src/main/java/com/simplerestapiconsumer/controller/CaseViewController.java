@@ -9,7 +9,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Controller;
@@ -19,14 +18,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simplerestapiconsumer.entity.AddEmployeeDTO;
 import com.simplerestapiconsumer.entity.CaseUpdateDTO;
 import com.simplerestapiconsumer.entity.Cases;
 import com.simplerestapiconsumer.entity.Customer;
 import com.simplerestapiconsumer.entity.Employee;
+import com.simplerestapiconsumer.entity.IDWrapper;
 import com.simplerestapiconsumer.entity.Product;
 import com.simplerestapiconsumer.util.EntityGenerator;
 import com.simplerestapiconsumer.util.TokenParser;
@@ -47,34 +45,11 @@ public class CaseViewController {
 		this.parser = parser;
 	}
 	
-//	@GetMapping("/case-details")
-//	public String showCasesForCustomer(@CookieValue(name="token") String token, @RequestParam(name="cusID") int cusID, Model model) {
-//		List<Cases> getCases = restTemplate.exchange("http://localhost:8080/cases/customers?id="+cusID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody();
-//		model.addAttribute("cases", getCases);
-//		model.addAttribute("role", parser.getAuthFromToken(token));
-//		model.addAttribute("caseUpdate", new CaseUpdateDTO());
-//		return "list-customer-cases";
-//	}
-//	
-//	//TODO resttemplate retrieval with custom DTO for display
-//	@GetMapping("/cases-history")
-//	public String retrieveCasesHistoryForUser(@CookieValue(name="token") String token, Model model) throws JsonMappingException, JsonProcessingException {
-//		//https://stackoverflow.com/questions/9381665/how-can-we-configure-the-internal-jackson-mapper-when-using-resttemplate
-//		//putting as bean seems to break everything but this specific case, attempt at later date
-//		ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build().findAndRegisterModules();
-//    	MappingJackson2HttpMessageConverter convert = new MappingJackson2HttpMessageConverter();
-//    	convert.setObjectMapper(mapper);
-//		restTemplate.getMessageConverters().add(0, convert);
-//		
-//		ResponseEntity<Cases[]> cases = restTemplate.exchange("http://localhost:8080/employees/users/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases[].class);
-//		model.addAttribute("cases", cases.getBody());
-//		return "case-history";
-//	}
-	
 	@GetMapping({"all-cases", "case-details", "cases-history"})
 	public String retrieveCaseForAnything(@CookieValue(name="token") String token, Model model, @RequestParam(name="cusID", required=false) Integer cusID, HttpServletRequest req) {
 		model.addAttribute("role", parser.getAuthFromToken(token));
 		model.addAttribute("caseUpdate", new CaseUpdateDTO());
+		model.addAttribute("empToAdd", new IDWrapper());
 		switch(req.getRequestURI().toString()) {
 			case "/all-cases":
 				model.addAttribute("cases", restTemplate.exchange("http://localhost:8080/cases", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Cases>>() {}).getBody());
@@ -111,7 +86,6 @@ public class CaseViewController {
 		return "new-case-form";
 	}
 	
-	//TODO Desc field so this has purpose
 	@GetMapping("/update-case")
 	public String showSelectedCase(@CookieValue(name="token") String token, @RequestParam(name="caseID") int caseID, Model model) {
 		Cases gotCase = restTemplate.exchange("http://localhost:8080/cases/id?caseID="+caseID, HttpMethod.GET, entityGenerator.entityGenerator(token, null), Cases.class).getBody();
@@ -119,12 +93,12 @@ public class CaseViewController {
 		return "case-form";
 	}
 	
-	@GetMapping("/add-employee-to-case")
-	public String showFormToAddEmployeeToCase(@CookieValue(name="token") String token, @RequestParam(name="caseID") int caseID, Model model) {
-		AddEmployeeDTO wrapper = new AddEmployeeDTO(caseID, null);
-		List<Employee> employees = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Employee>>() {}).getBody();
-		model.addAttribute("employeeList", employees);
-		model.addAttribute("case", wrapper);
-		return "add-employee-to-case";
-	}
+//	@GetMapping("/add-employee-to-case")
+//	public String showFormToAddEmployeeToCase(@CookieValue(name="token") String token, @RequestParam(name="caseID") int caseID, Model model) {
+//		AddEmployeeDTO wrapper = new AddEmployeeDTO(caseID, null);
+//		List<Employee> employees = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.GET, entityGenerator.entityGenerator(token, null), new ParameterizedTypeReference<List<Employee>>() {}).getBody();
+//		model.addAttribute("employeeList", employees);
+//		model.addAttribute("case", wrapper);
+//		return "add-employee-to-case";
+//	}
 }

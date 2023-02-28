@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -58,6 +60,13 @@ public class EmployeeConsumerController {
 		ResponseEntity<Employee> wrapper = restTemplate.exchange("http://localhost:8080/employees", HttpMethod.PUT, entityGenerator.entityGenerator(token, employee), Employee.class);
 		model.addAttribute("employee", wrapper.getBody());
 		return "account-details";
+	}
+	
+	@GetMapping("/deleteEmployee")
+	public String deleteEmployee(@CookieValue(name="token") String token, @RequestParam("id") Integer id, Model model) {
+		ResponseEntity<Object> deleter = restTemplate.exchange("http://localhost:8080/employees/id?id="+id, HttpMethod.DELETE, entityGenerator.entityGenerator(token, null), Object.class);
+		log.warn("Employee ID "+ id + " has been deleted from the system.");
+		return "redirect:/list-employees";
 	}
 	
 	private ResponseEntity<Object> GenerateUserFromDetails(String token, Employee employee) {
