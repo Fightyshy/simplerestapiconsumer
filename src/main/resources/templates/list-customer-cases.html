@@ -10,6 +10,9 @@
 	<title>CRM Homepage</title>
 </head>
 <body>
+	<th:block th:if="${!#strings.isEmpty(errorMsg)}">
+		<p th:text="${errorMsg}"/>
+	</th:block>
 	<table class="table">
 		<tr>
 			<th>Case ID</th>
@@ -40,6 +43,7 @@
 					<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmDeleteModal">Delete case</button>
 				</th:block>
 				
+				<!-- TODO add remove employee modal, select and option sent to consumer in form-->
 				<!-- could be useful in future, prev attempted solution with no results https://stackoverflow.com/questions/50464802/how-can-i-populate-value-at-form-inside-modal-using-bootstrap-and-thymeleaf -->
 				<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
 					<div class="modal-dialog" role="document">
@@ -83,6 +87,27 @@
 									<p th:text="${errorMessage}"/>
 								</th:block>
 								<button type="submit" class="btn btn-primary">Add employee</button>
+							</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="modal fade" id="removeEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="removeEmployeeModal" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="removeEmployeeModal">Remove employee form existing case</h5>
+							</div>
+							
+							<div class="modal-body">
+							<p>A maximum of 5 employees is allowed on one case at any time</p>
+							<form action="#" th:action="@{/removeEmployeeByID}" th:object="${empToAdd}" method="get">
+								<input type="hidden" th:name="caseId" th:id="caseId" th:value="${case.id}"/>
+								<select name="employees" th:field="${empToAdd.ID}" class="form-select">
+									<option th:each="name : ${case.employee}"  th:value="${name.id}" th:text="${name.firstName}"></option>
+								</select>
+								<button type="submit" class="btn btn-primary">Remove employee</button>
 							</form>
 							</div>
 						</div>

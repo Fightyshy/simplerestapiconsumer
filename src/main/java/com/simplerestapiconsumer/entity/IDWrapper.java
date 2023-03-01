@@ -4,9 +4,9 @@ public class IDWrapper {
 	private int ID;
 	private int caseId;
 
-	public IDWrapper(int iD, int caseId) {
-		ID = iD;
-		caseId = caseId;
+	public IDWrapper(int ID, int caseId) {
+		this.ID = ID;
+		this.caseId = caseId;
 	}
 	
 	public IDWrapper() {
@@ -16,8 +16,8 @@ public class IDWrapper {
 		return ID;
 	}
 
-	public void setID(int iD) {
-		ID = iD;
+	public void setID(int ID) {
+		this.ID = ID;
 	}
 
 	public int getCaseId() {
